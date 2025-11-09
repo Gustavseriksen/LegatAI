@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Legat Matcher AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 { color: #333; text-align: center; }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            resize: none;
+            font-size: 16px;
+            box-sizing: border-box; /* Sikrer at padding ikke gør den bredere end 100% */
+        }
+        textarea:focus { outline: none; border-color: #4CAF50; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s;
+        }
+        button:hover { background-color: #45a049; }
+        /* Loading spinner */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4CAF50;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none; /* Skjult som standard */
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #resultat {
+            margin-top: 2rem;
+            white-space: pre-wrap; /* Bevarer linjeskift fra AI'ens svar */
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #4CAF50;
+            display: none; /* Skjult indtil der er et svar */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎓 Legat Matcher AI</h1>
+    <p>Fortæl lidt om dig selv, dit studie og hvor du er fra. Så finder AI'en de bedste legater til dig.</p>
+
+    <textarea id="profilInput" placeholder="F.eks.: Jeg er en 23-årig tømrerlærling fra Odense, der mangler penge til værktøj..."></textarea>
+    <button onclick="findLegater()">Find mine legater! 🚀</button>
+
+    <div class="loader" id="loader"></div>
+    <div id="resultat"></div>
+</div>
+
+<script>
+    async function findLegater() {
+        const inputFelt = document.getElementById('profilInput');
+        const resultatDiv = document.getElementById('resultat');
+        const loader = document.getElementById('loader');
+        const knap = document.querySelector('button');
+
+        const brugerProfil = inputFelt.value.trim();
+        if (!brugerProfil) {
+            alert("Du skal skrive lidt om dig selv først!");
+            return;
+        }
+
+        // Vis loader, skjul gammelt resultat, deaktiver knap
+        loader.style.display = 'block';
+        resultatDiv.style.display = 'none';
+        knap.disabled = true;
+        knap.style.backgroundColor = '#ccc';
+
+        try {
+            // Her sker magien: Vi kalder din backend præcis som Postman gjorde!
+            const response = await fetch('/match-legater', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain' // Vigtigt: Vi sender ren tekst, ikke JSON
+                },
+                body: brugerProfil
+            });
+
+            if (!response.ok) throw new Error('Der opstod en fejl i backenden');
+
+            const data = await response.text(); // Vi forventer svar som ren tekst
+
+            // Vis resultatet
+            resultatDiv.textContent = data;
+            resultatDiv.style.display = 'block';
+
+        } catch (error) {
+            resultatDiv.textContent = "⚠️ Hovsa! Noget gik galt: " + error.message;
+            resultatDiv.style.display = 'block';
+            resultatDiv.style.borderLeftColor = 'red';
+        } finally {
+            // Fjern loader og aktiver knap igen
+            loader.style.display = 'none';
+            knap.disabled = false;
+            knap.style.backgroundColor = '#4CAF50';
+        }
+    }
+</script>
+
+</body>
+</html>
