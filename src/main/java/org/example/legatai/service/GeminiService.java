@@ -12,8 +12,6 @@ public class GeminiService {
 
     private final WebClient webClient;
 
-    // BEMÆRK: Vi behøver kun denne ene variabel nu,
-    // fordi den indeholder HELE URL'en inklusiv nøglen.
     @Value("${gemini.url}")
     private String fullUrl;
 
@@ -26,7 +24,7 @@ public class GeminiService {
         GeminiRequest requestBody = new GeminiRequest(prompt);
 
         GeminiResponse response = webClient.post()
-                .uri(fullUrl) // <--- HER BRUGER VI DEN DIREKTE
+                .uri(fullUrl)
                 .header("Content-Type", "application/json")
                 .bodyValue(requestBody)
                 .retrieve()

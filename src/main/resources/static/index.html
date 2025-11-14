@@ -77,7 +77,7 @@
     <p>Fortæl lidt om dig selv, dit studie og hvor du er fra. Så finder AI'en de bedste legater til dig.</p>
 
     <textarea id="profilInput" placeholder="F.eks.: Jeg er en 23-årig tømrerlærling fra Odense, der mangler penge til værktøj..."></textarea>
-    <button onclick="findLegater()">Find mine legater! 🚀</button>
+    <button onclick="findLegater()">Find mine legater</button>
 
     <div class="loader" id="loader"></div>
     <div id="resultat"></div>
@@ -103,18 +103,18 @@
         knap.style.backgroundColor = '#ccc';
 
         try {
-            // Her sker magien: Vi kalder din backend præcis som Postman gjorde!
+            // Kalder backend
             const response = await fetch('/match-legater', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain' // Vigtigt: Vi sender ren tekst, ikke JSON
+                    'Content-Type': 'text/plain' // Sender plain tekst, ikke JSON
                 },
                 body: brugerProfil
             });
 
             if (!response.ok) throw new Error('Der opstod en fejl i backenden');
 
-            const data = await response.text(); // Vi forventer svar som ren tekst
+            const data = await response.text(); // Forventer svar som ren tekst
 
             // Vis resultatet
             resultatDiv.textContent = data;

@@ -52,7 +52,7 @@ public class LegatService {
     }
 
 
-    // VIGTIG METODE: Laver listen om til én lang tekst-string til AI'en
+    // Laver listen om til én lang tekst-string til AI'en
     public String getLegaterAsString() {
         StringBuilder sb = new StringBuilder();
         for (Legat l : legatListe) {
